@@ -28,7 +28,7 @@ class Users extends BaseController
             'email' => $this->request->getPost('email'),
         ]);
 
-        return redirect()->to('/users');
+        return redirect()->to(site_url('users'));
     }
 
     public function edit($id)
@@ -56,6 +56,6 @@ class Users extends BaseController
         $model = new UserModel();
         $model->delete($id);
 
-        return redirect()->to('/users');
+        return redirect()->to('users');
     }
 }
