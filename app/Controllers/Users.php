@@ -61,10 +61,48 @@ class Users extends BaseController
     {
         $model = new UserModel();
 
-        $model->update($id, [
-            'name'  => $this->request->getPost('name'),
-            'email' => $this->request->getPost('email'),
-        ]);
+        // Get existing user
+        $user = $model->find($id);
+
+        if (!$user) {
+            return redirect()->to('/users');
+        }
+
+        // Prepare data array
+        $data = [
+            'name'    => $this->request->getPost('name'),
+            'email'   => $this->request->getPost('email'),
+            'phone'   => $this->request->getPost('phone'),
+            'address' => $this->request->getPost('address'),
+            'dob'     => $this->request->getPost('dob'),
+            'status'  => $this->request->getPost('status'),
+        ];
+
+        // 🔐 Update password only if provided
+        $password = $this->request->getPost('password');
+        if (!empty($password)) {
+            $data['password'] = password_hash($password, PASSWORD_DEFAULT);
+        }
+
+        // 📸 Handle photo update
+        $file = $this->request->getFile('photo');
+
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+
+            // Delete old photo if exists
+            if (!empty($user['photo']) && file_exists('uploads/' . $user['photo'])) {
+                unlink('uploads/' . $user['photo']);
+            }
+
+            // Save new photo
+            $newName = $file->getRandomName();
+            $file->move('uploads/', $newName);
+
+            $data['photo'] = $newName;
+        }
+
+        // Update record
+        $model->update($id, $data);
 
         return redirect()->to('/users');
     }
