@@ -11,6 +11,13 @@ class Auth extends BaseController
         return view('login');
     }
 
+    public function logout()
+    {
+        session()->remove(['user_id', 'email', 'logged_in']);
+        session()->regenerate();
+        return redirect()->to('/login');
+    }
+
     public function authenticate()
     {
         $model = new UserModel();

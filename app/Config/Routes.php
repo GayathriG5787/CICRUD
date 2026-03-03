@@ -36,3 +36,5 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     $routes->post('/profile/update', 'Users::updateProfile');
     $routes->get('/profile/download', 'Users::downloadPdf');
 });
+
+$routes->get('/logout', 'Auth::logout');
