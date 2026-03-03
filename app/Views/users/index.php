@@ -14,6 +14,7 @@
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Photo</th>
             <th width="200">Actions</th>
         </tr>
     </thead>
@@ -21,8 +22,21 @@
         <?php foreach($users as $user): ?>
         <tr>
             <td><?= $user['id'] ?></td>
-            <td><?= $user['name'] ?></td>
-            <td><?= $user['email'] ?></td>
+            <td><?= esc($user['name']) ?></td>
+            <td><?= esc($user['email']) ?></td>
+
+            <!-- Photo Column -->
+            <td>
+                <?php if (!empty($user['photo'])): ?>
+                    <img src="<?= base_url('uploads/' . $user['photo']) ?>"
+                         width="50"
+                         height="50"
+                         style="object-fit: cover; border-radius: 5px;">
+                <?php else: ?>
+                    No Image
+                <?php endif; ?>
+            </td>
+
             <td class="d-flex gap-2">
 
                 <!-- Edit Button -->
@@ -31,7 +45,7 @@
                     Edit
                 </a>
 
-                <!-- Delete Button (POST Form) -->
+                <!-- Delete Button -->
                 <form action="<?= site_url('users/delete/' . $user['id']) ?>"
                       method="post"
                       onsubmit="return confirm('Are you sure?');">

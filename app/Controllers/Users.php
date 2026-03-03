@@ -23,12 +23,30 @@ class Users extends BaseController
     {
         $model = new UserModel();
 
+        // Handle file upload
+        $file = $this->request->getFile('photo');
+        $photoName = null;
+
+        if ($file && $file->isValid() && ! $file->hasMoved()) {
+            $photoName = $file->getRandomName();
+            $file->move('uploads/', $photoName);
+        }
+
         $model->save([
-            'name'  => $this->request->getPost('name'),
-            'email' => $this->request->getPost('email'),
+            'name'     => $this->request->getPost('name'),
+            'email'    => $this->request->getPost('email'),
+            'phone'    => $this->request->getPost('phone'),
+            'address'  => $this->request->getPost('address'),
+            'dob'      => $this->request->getPost('dob'),
+            'status'   => $this->request->getPost('status'),
+            'password' => password_hash(
+                $this->request->getPost('password'),
+                PASSWORD_DEFAULT
+            ),
+            'photo'    => $photoName,
         ]);
 
-        return redirect()->to(site_url('users'));
+        return redirect()->to('users');
     }
 
     public function edit($id)
