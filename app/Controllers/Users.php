@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class Users extends BaseController
 {
@@ -75,23 +76,24 @@ class Users extends BaseController
 
     public function downloadPdf()
     {
-        $model = new UserModel();
+        $model = new \App\Models\UserModel();
         $userId = session()->get('user_id');
-
-        if (!$userId) {
-            return redirect()->to('/login');
-        }
-
         $user = $model->find($userId);
+
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
 
         $html = view('users/pdf_template', ['user' => $user]);
 
-        $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
+
         $dompdf->stream("my_profile.pdf", ["Attachment" => true]);
     }
-
+    
     public function create()
     {
         return view('users/create');
